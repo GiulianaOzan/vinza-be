@@ -1,0 +1,18 @@
+{
+  "app": {
+    "general": {
+      "general_error": {
+        "key": "app.general.general_error",
+        "message": "Error general",
+        "message_eng": "General error",
+        "status": 500
+      },
+      "not_found": {
+        "key": "app.general.not_found",
+        "message": "Error general",
+        "message_eng": "General error",
+        "status": 404
+      }
+    }
+  }
+}

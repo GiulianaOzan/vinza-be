@@ -1,6 +1,9 @@
-import app from '@/app';
+import initApp from '@/app';
 import 'dotenv/config';
 
-app();
+function server() {
+  const app = initApp();
+  app.listen(process.env.PORT || 5000);
+}
 
-console.log('ascas');
+server();

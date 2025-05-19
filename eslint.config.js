@@ -1,34 +1,40 @@
-const {
-    defineConfig,
-} = require("eslint/config");
+const { defineConfig } = require('eslint/config');
 
-const tsParser = require("@typescript-eslint/parser");
-const typescriptEslint = require("@typescript-eslint/eslint-plugin");
-const globals = require("globals");
-const js = require("@eslint/js");
+const tsParser = require('@typescript-eslint/parser');
+const typescriptEslint = require('@typescript-eslint/eslint-plugin');
+const globals = require('globals');
+const js = require('@eslint/js');
 
-const {
-    FlatCompat,
-} = require("@eslint/eslintrc");
+const { FlatCompat } = require('@eslint/eslintrc');
 
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
-module.exports = defineConfig([{
+module.exports = defineConfig([
+  {
     languageOptions: {
-        parser: tsParser,
+      parser: tsParser,
 
-        globals: {
-            ...globals.node,
-        },
+      globals: {
+        ...globals.node,
+      },
     },
 
     plugins: {
-        "@typescript-eslint": typescriptEslint,
+      '@typescript-eslint': typescriptEslint,
     },
 
-    extends: compat.extends("eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"),
-}]);
+    extends: compat.extends(
+      'eslint:recommended',
+      'plugin:@typescript-eslint/recommended',
+      'prettier',
+    ),
+
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'error',
+    },
+  },
+]);

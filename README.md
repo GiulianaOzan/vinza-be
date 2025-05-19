@@ -14,7 +14,7 @@
 
 `sudo docker compose -f docker-compose.local.yml up`
 
-### If is the first time
+### If its the first time
 
 `sudo docker compose -f docker-compose.local.yml up --build`
 
