@@ -10,7 +10,8 @@
     "lint": "eslint 'src/**/*.ts'",
     "prettify": "prettier --write \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
-    "db:migrate": "drizzle-kit generate && drizzle-kit migrate",
+    "db:generate-migration": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "prepare": "husky"
   },
   "keywords": [],
@@ -23,6 +24,8 @@
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.18",
     "@types/pg": "^8.15.2",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
     "dotenv": "^16.5.0",
@@ -44,6 +47,8 @@
   "dependencies": {
     "drizzle-orm": "^0.43.1",
     "pg": "^8.16.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "tsconfig-paths": "^4.2.0"
   },
   "lint-staged": {

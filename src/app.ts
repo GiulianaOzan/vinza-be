@@ -1,17 +1,25 @@
-import { errors } from '@/error';
+import config from '@/config';
+import { setupDocs } from '@/docs';
 import { handleErrors } from '@/error/handler';
-import express from 'express';
+import userRouter from '@/users/router';
+import express, { Router } from 'express';
+
+function initializeRouter() {
+  const router = Router();
+
+  // Append routes created at /<module>/router.ts
+  router.use('/users', userRouter);
+  return router;
+}
 
 export default function () {
   const app = express();
 
   app.use(express.json());
 
-  // Routes
-  app.get('/', (req) => {
-    console.log('ACA!!', req.query);
-    throw errors.app.general.general_error;
-  });
+  app.use(`/api/${config.API_VERSION}`, initializeRouter());
+
+  setupDocs(app);
 
   // Global error handler (should be after routes)
   handleErrors(app);

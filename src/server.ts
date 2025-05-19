@@ -1,9 +1,10 @@
 import initApp from '@/app';
+import config from '@/config';
 import 'dotenv/config';
 
 function server() {
   const app = initApp();
-  app.listen(process.env.PORT || 5000);
+  app.listen(config.PORT);
 }
 
 server();
