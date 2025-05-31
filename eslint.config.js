@@ -35,6 +35,7 @@ module.exports = defineConfig([
 
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      'no-console': 'error',
     },
   },
 ]);

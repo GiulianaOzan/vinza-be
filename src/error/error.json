@@ -13,6 +13,20 @@
         "message_eng": "General error",
         "status": 404
       }
+    },
+    "auth": {
+      "non_valid_credentials": {
+        "key": "app.auth.non_valid_credentials",
+        "message": "Non valid credentials",
+        "message_eng": "Non valid credentials",
+        "status": 401
+      },
+      "unauthorized": {
+        "key": "app.auth.unauthorized",
+        "message": "Unauthorized",
+        "message_eng": "Unauthorized",
+        "status": 401
+      }
     }
   }
 }

@@ -27,7 +27,8 @@ function handleUnhandledError(
 ) {
   if (!err) next();
 
-  if (err.error && err.status) {
+  // If the error is already in the correct format (has key, message, etc)
+  if (err.key && err.message && err.message_eng && err.status) {
     res.status(err.status).json(err);
     return;
   }
@@ -45,7 +46,15 @@ function handleNotFoundError(
 }
 
 export function handleErrors(app: Express) {
-  // Dont even dare to change this order
   app.use(handleNotFoundError);
   app.use(handleUnhandledError);
 }
+
+process.on('unhandledRejection', (reason: unknown) => {
+  // Forward the error to the Express error handler if possible
+  // You might want to log the error to a logging service here
+  // eslint-disable-next-line no-console
+  console.error('Unhandled Promise Rejection:', reason);
+
+  throw reason;
+});

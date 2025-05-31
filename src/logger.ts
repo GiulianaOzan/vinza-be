@@ -2,6 +2,7 @@ import { createLogger, format, Logger, transports } from 'winston';
 import * as path from 'path';
 import * as fs from 'fs';
 import type { Request, Response, NextFunction } from 'express';
+import config from './config';
 
 const { combine, timestamp, printf, colorize } = format;
 
@@ -66,20 +67,35 @@ declare global {
       This methods are used to debug through the req lifecycle
       */
       trace_id: string;
-      info: (msg: string) => Logger;
-      error: (msg: string) => Logger;
-      debug: (msg: string) => Logger;
+      logger: {
+        info: (msg: string) => Logger;
+        error: (msg: string) => Logger;
+        debug: (msg: string) => Logger;
+      };
     }
   }
 }
 
 export function injectLogger(req: Request, _res: Response, next: NextFunction) {
   const formatMsg = (msg: string) =>
-    `[trace_id=${req.trace_id || 'no-trace'}] [${req.method} ${req.originalUrl}] ${msg}`;
+    `${config.IS_TRACING_ENABLED ? `[trace_id=${req.trace_id || 'no-trace'}]` : ''} [${req.method} ${req.originalUrl}] ${msg}`;
+  req.logger = {
+    info: (msg: string) => logger.info(formatMsg(msg)),
+    error: (msg: string) => logger.error(formatMsg(msg)),
+    debug: (msg: string) => logger.debug(formatMsg(msg)),
+  };
+  next();
+}
 
-  req.info = (msg: string) => logger.info(formatMsg(msg));
-  req.error = (msg: string) => logger.error(formatMsg(msg));
-  req.debug = (msg: string) => logger.debug(formatMsg(msg));
+export function logRequests(req: Request, res: Response, next: NextFunction) {
+  const start = Date.now();
 
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+
+    logger.info(
+      `${res.statusCode} - ${config.IS_TRACING_ENABLED ? `[trace_id=${req.trace_id || 'no-trace'}]` : ''}[${req.method} ${req.originalUrl}] - ${duration}ms`,
+    );
+  });
   next();
 }
