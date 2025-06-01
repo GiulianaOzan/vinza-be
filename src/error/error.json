@@ -47,6 +47,22 @@
         "message_eng": "Permission not found",
         "status": 404
       }
+    },
+    "sucursal": {
+      "not_found": {
+        "key": "app.sucursal.not_found",
+        "message": "Sucursal not found",
+        "message_eng": "Sucursal not found",
+        "status": 404
+      }
+    },
+    "bodega": {
+      "not_found": {
+        "key": "app.bodega.not_found",
+        "message": "Bodega not found",
+        "message_eng": "Bodega not found",
+        "status": 404
+      }
     }
   }
 }

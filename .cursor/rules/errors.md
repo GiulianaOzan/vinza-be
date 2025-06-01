@@ -1,0 +1,4 @@
+- Dont generate local erros at module levels
+- Centralice errors at @error/error.json
+- Use consistent error codes with the error semantic.
+- Avoid 401 and 403, prefer 404

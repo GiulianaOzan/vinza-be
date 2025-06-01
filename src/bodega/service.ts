@@ -1,31 +1,40 @@
+import { sequelize } from '@/db';
+import { errors } from '@/error';
+import { Sucursal } from '@/sucursal/model';
 import { Bodega } from './model';
 import { CreateBodegaDto, UpdateBodegaDto } from './types';
-import { Rol } from '@/rbac/model';
-import { User } from '@/users/model';
-import { sequelize } from '@/db';
-
-const bodegaNotFoundError = { message: 'Bodega not found', status: 404 };
 
 class BodegaService {
   public async create(dto: CreateBodegaDto) {
-    const bodega = await Bodega.create(dto);
-
-    return bodega;
+    const transaction = await sequelize.transaction();
+    try {
+      const bodega = await Bodega.create(dto, { transaction });
+      // Create the first sucursal as main
+      await Sucursal.create(
+        {
+          nombre: dto.nombre,
+          direccion: 'Principal',
+          es_principal: true,
+          bodegaId: bodega.id,
+        },
+        { transaction },
+      );
+      await transaction.commit();
+      return bodega;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 
   public async findAll() {
-    return await Bodega.findAll();
+    return Bodega.findAll();
   }
 
   public async findOne(id: number) {
-    const bodega = await Bodega.findByPk(id, {
-      include: [
-        { model: Rol, as: 'roles' },
-        { model: User, as: 'users' },
-      ],
-    });
+    const bodega = await Bodega.findByPk(id);
     if (!bodega) {
-      throw bodegaNotFoundError;
+      throw errors.app.bodega.not_found;
     }
     return bodega;
   }
@@ -35,7 +44,7 @@ class BodegaService {
     try {
       const bodega = await Bodega.findByPk(id, { transaction });
       if (!bodega) {
-        throw bodegaNotFoundError;
+        throw errors.app.bodega.not_found;
       }
       await bodega.update(dto, { transaction });
       await transaction.commit();
@@ -49,7 +58,7 @@ class BodegaService {
   public async delete(id: number) {
     const bodega = await Bodega.findByPk(id);
     if (!bodega) {
-      throw bodegaNotFoundError;
+      throw errors.app.bodega.not_found;
     }
     await bodega.destroy();
     return bodega;
