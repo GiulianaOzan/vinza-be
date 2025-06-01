@@ -1,5 +1,6 @@
 import { errors } from '@/error';
 import { IError } from '@/error/types';
+import logger from '@/logger';
 import { NextFunction, Response, Request, Express } from 'express';
 
 export interface AppError extends Error {
@@ -42,6 +43,7 @@ function handleNotFoundError(
   _res: Response,
   next: NextFunction,
 ) {
+  logger.error('Not found path');
   next(errors.app.general.not_found);
 }
 

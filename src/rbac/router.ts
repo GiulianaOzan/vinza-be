@@ -4,6 +4,7 @@ import { permissionsService, rolesService } from './service';
 import { requirePermissions } from './middleware';
 import { authMiddleware } from '@/auth/middleware';
 import { Permissions } from './permissions';
+import logger from '@/logger';
 
 const rolesController = new RolesController(rolesService);
 const permissionsController = new PermissionsController(permissionsService);
@@ -259,4 +260,7 @@ router.put(
   requirePermissions([Permissions.SUDO]),
   permissionsController.update,
 );
+
+logger.debug('Rbac router initialized');
+
 export default router;

@@ -3,13 +3,26 @@ import { Permissions } from '@/rbac/permissions';
 import { permissionsService, rolesService } from '@/rbac/service';
 import { User } from '@/users/model';
 import { Bodega } from '@/bodega/model';
+import { estadoEventoService } from '@/estado-evento/service';
+import { eventoService } from '@/evento/service';
+import { sucursalService } from '@/sucursal/service';
+import config from '@/config';
 
 async function seed() {
   try {
+    config.IS_AUDIT_ENABLED = false;
     // Create bodega 'zuccardi'
     const zuccardi = await Bodega.create({
       nombre: 'zuccardi',
       descripcion: 'Bodega Zuccardi',
+    });
+
+    // Create a main sucural
+    const mainSucursal = await sucursalService.create({
+      nombre: 'main',
+      es_principal: true,
+      direccion: 'direccion 1',
+      bodegaId: zuccardi.id,
     });
 
     // Create admin role (all permissions except SUDO), related to zuccardi
@@ -70,12 +83,38 @@ async function seed() {
     });
     await sudoer.$set('roles', [sudoRole.id]);
 
+    const [activoEstadoEvento, inactivoEstadoEvento] = await Promise.all(
+      ['activo', 'inactivo'].map(async (nombre) => {
+        return await estadoEventoService.create({
+          nombre,
+        });
+      }),
+    );
+
+    await eventoService.create({
+      nombre: 'evento 1',
+      descripcion: 'descripcion 1',
+      cupo: '10',
+      sucursalId: mainSucursal.id,
+      estadoId: activoEstadoEvento.id,
+    });
+
+    await eventoService.create({
+      nombre: 'evento 2',
+      descripcion: 'descripcion 2',
+      cupo: '10',
+      sucursalId: mainSucursal.id,
+      estadoId: inactivoEstadoEvento.id,
+    });
+
     // eslint-disable-next-line no-console
     console.log('Database seeded successfully');
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error seeding database:', error);
     throw error;
+  } finally {
+    config.IS_AUDIT_ENABLED = true;
   }
 }
 

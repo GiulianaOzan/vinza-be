@@ -13,7 +13,7 @@ export class RolesService {
     const transaction = await sequelize.transaction();
     try {
       const { permisos, ...rest } = dto;
-      const role = await Rol.create(rest, { transaction });
+      let role = await Rol.create(rest, { transaction });
 
       if (permisos && permisos.length > 0) {
         // Validate that all provided permissions exist
@@ -27,6 +27,7 @@ export class RolesService {
         }
 
         await role.$set('permisos', permisos, { transaction });
+        role = await role.save({ transaction, returning: true });
       }
 
       await transaction.commit();

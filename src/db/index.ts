@@ -7,6 +7,8 @@ import 'dotenv/config';
 import { Sequelize } from 'sequelize-typescript';
 import { Sucursal } from '@/sucursal/model';
 import { Audit } from '@/audit/model';
+import { EstadoEvento, HEstadoEvento } from '@/estado-evento/model';
+import { Evento } from '@/evento/model';
 
 export const sequelize = new Sequelize({
   dialect: 'postgres',
@@ -27,6 +29,9 @@ export const sequelize = new Sequelize({
     Bodega,
     Sucursal,
     Audit,
+    Evento,
+    EstadoEvento,
+    HEstadoEvento,
   ], // or [Player, Team],
 });
 

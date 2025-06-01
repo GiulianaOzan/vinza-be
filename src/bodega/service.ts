@@ -1,9 +1,9 @@
+import { auditEmitter } from '@/audit/event';
 import { sequelize } from '@/db';
 import { errors } from '@/error';
-import { Sucursal } from '@/sucursal/model';
+import { sucursalService } from '@/sucursal/service';
 import { Bodega } from './model';
 import { CreateBodegaDto, UpdateBodegaDto } from './types';
-import { auditEmitter } from '@/audit/event';
 
 class BodegaService {
   public async create(dto: CreateBodegaDto) {
@@ -11,15 +11,16 @@ class BodegaService {
     try {
       const bodega = await Bodega.create(dto, { transaction });
       // Create the first sucursal as main
-      await Sucursal.create(
+      sucursalService.create(
         {
           nombre: dto.nombre,
           direccion: 'Principal',
           es_principal: true,
           bodegaId: bodega.id,
         },
-        { transaction },
+        transaction,
       );
+
       await transaction.commit();
 
       auditEmitter.emitEntry({

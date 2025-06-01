@@ -1,4 +1,5 @@
 import { authMiddleware } from '@/auth/middleware';
+import logger from '@/logger';
 import { requirePermissions } from '@/rbac/middleware';
 import { Permissions } from '@/rbac/permissions';
 import { UsersController } from '@/users/controller';
@@ -244,5 +245,7 @@ router.delete(
   requirePermissions([Permissions.USERS_MANAGE]),
   controller.delete,
 );
+
+logger.debug('Users router initialized');
 
 export default router;

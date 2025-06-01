@@ -3,17 +3,34 @@ import { Sucursal } from './model';
 import { CreateSucursalDto, UpdateSucursalDto } from './types';
 import { sequelize } from '@/db';
 import { auditEmitter } from '@/audit/event';
+import { Transaction } from 'sequelize';
 
 class SucursalService {
-  public async create(dto: CreateSucursalDto) {
+  public async create(dto: CreateSucursalDto, transaction?: Transaction) {
     // If es_principal is true, set all others in the same bodega to false
     if (dto.es_principal) {
-      await Sucursal.update(
-        { es_principal: false },
-        { where: { bodegaId: dto.bodegaId } },
-      );
+      const updatedSucursal = (
+        await Sucursal.update(
+          { es_principal: false },
+          {
+            where: { bodegaId: dto.bodegaId, es_principal: true },
+            transaction,
+            returning: true,
+          },
+        )
+      )[1];
+      if (updatedSucursal.length) {
+        updatedSucursal.map((s) =>
+          auditEmitter.emitEntry({
+            tipoEvento: 'sucursal:update',
+            valor: s.dataValues,
+          }),
+        );
+      }
     }
-    const sucursal = await Sucursal.create(dto);
+
+    const sucursal = await Sucursal.create(dto, { transaction });
+
     auditEmitter.emitEntry({
       tipoEvento: 'sucursal:create',
       valor: sucursal.dataValues,

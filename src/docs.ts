@@ -2,6 +2,7 @@ import config from '@/config';
 import { type Express } from 'express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import logger from './logger';
 
 const options = {
   definition: {
@@ -35,6 +36,5 @@ const swaggerSpec = swaggerJSDoc(options);
 export function setupDocs(app: Express) {
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-  // eslint-disable-next-line no-console
-  console.log('Initialized docs at http://localhost:5000/api/v1/docs');
+  logger.info('Initialized docs at http://localhost:5000/docs');
 }

@@ -4,6 +4,7 @@ import { auditService } from './service';
 import { authMiddleware } from '@/auth/middleware';
 import { requirePermissions } from '@/rbac/middleware';
 import { Permissions } from '@/rbac/permissions';
+import logger from '@/logger';
 
 const router = Router();
 
@@ -20,10 +21,12 @@ const auditController = new AuditController(auditService);
  *         description: A list of audits
  */
 router.get(
-  '/',
+  '',
   authMiddleware,
   requirePermissions([Permissions.SUDO]),
   auditController.findAll,
 );
+
+logger.debug('Audit router initialized');
 
 export default router;

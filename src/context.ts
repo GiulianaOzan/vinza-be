@@ -8,14 +8,16 @@ import { errors } from './error';
 import { JwtAuthPayload } from './auth/types';
 
 const NAMESPACE_NAME = 'app.context';
+
 type ctx = {
   user: number;
+  traceId: string;
 };
 
 export const context =
   getNamespace<ctx>(NAMESPACE_NAME) || createNamespace<ctx>(NAMESPACE_NAME);
 
-export function setContext(key: keyof ctx, value: number) {
+export function setContext(key: keyof ctx, value: ctx[keyof ctx]) {
   context.set(key, value);
 }
 
@@ -42,6 +44,10 @@ export function contextMiddleware(
       }
 
       setContext('user', decoded.user);
+    }
+
+    if (req.trace_id) {
+      setContext('traceId', req.trace_id);
     }
 
     next();

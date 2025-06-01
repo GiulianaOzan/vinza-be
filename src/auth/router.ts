@@ -1,6 +1,7 @@
 import { authService } from './service';
 import { AuthController } from './controller';
 import { Router } from 'express';
+import logger from '@/logger';
 
 const controller = new AuthController(authService);
 const router = Router();
@@ -78,4 +79,5 @@ router.post('/register', controller.register);
  */
 router.post('/login', controller.login);
 
+logger.debug('Auth router initialized');
 export default router;

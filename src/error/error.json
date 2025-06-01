@@ -69,6 +69,20 @@
         "message_eng": "Bodega not found",
         "status": 404
       }
+    },
+    "evento": {
+      "not_found": {
+        "key": "app.evento.not_found",
+        "message": "Evento not found",
+        "message_eng": "Evento not found",
+        "status": 404
+      },
+      "estado_not_found": {
+        "key": "app.evento.estado_not_found",
+        "message": "Estado not found",
+        "message_eng": "Estado not found",
+        "status": 404
+      }
     }
   }
 }

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { BodegaController } from './controller';
 import { bodegaService } from './service';
+import logger from '@/logger';
 
 const controller = new BodegaController(bodegaService);
 const router = Router();
@@ -156,5 +157,7 @@ router.put('/:id', controller.update);
  *         description: Internal server error
  */
 router.delete('/:id', controller.delete);
+
+logger.debug('Bodega router initialized');
 
 export default router;

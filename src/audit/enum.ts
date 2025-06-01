@@ -16,6 +16,7 @@ export enum AuditModel {
   PERMISSION = 'permission',
   BODEDA = 'bodega',
   SUCURSAL = 'sucursal',
+  EVENTO = 'evento',
 }
 // Define the type for the audit events
 export type AuditEventType = `${AuditModel}:${AuditEvent}`;

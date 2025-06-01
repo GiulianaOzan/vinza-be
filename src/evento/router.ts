@@ -1,18 +1,18 @@
 import { Router } from 'express';
-import { SucursalController } from './controller';
-import { sucursalService } from './service';
+import { EventoController } from './controller';
+import { eventoService } from './service';
 import logger from '@/logger';
 
-const controller = new SucursalController(sucursalService);
+const controller = new EventoController(eventoService);
 const router = Router();
 
 /**
  * @openapi
- * /sucursales:
+ * /eventos:
  *   get:
- *     summary: Get all sucursales
+ *     summary: Get all eventos
  *     tags:
- *       - Sucursales
+ *       - Eventos
  *     responses:
  *       200:
  *         description: Success
@@ -21,19 +21,19 @@ router.get('', controller.getAll);
 
 /**
  * @openapi
- * /sucursales/{id}:
+ * /eventos/{id}:
  *   get:
- *     summary: Get a sucursal by id
+ *     summary: Get an evento by id
  *     tags:
- *       - Sucursales
+ *       - Eventos
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: The id of the sucursal
+ *         description: The id of the evento
  *     responses:
  *       200:
- *         description: Sucursal found successfully
+ *         description: Evento found successfully
  *       400:
  *         description: Bad request
  *       500:
@@ -43,11 +43,11 @@ router.get('/:id', controller.getOne);
 
 /**
  * @openapi
- * /sucursales:
+ * /eventos:
  *   post:
- *     summary: Create a sucursal
+ *     summary: Create an evento
  *     tags:
- *       - Sucursales
+ *       - Eventos
  *     requestBody:
  *       required: true
  *       content:
@@ -57,26 +57,27 @@ router.get('/:id', controller.getOne);
  *             properties:
  *               nombre:
  *                 type: string
- *                 description: El nombre de la sucursal
+ *                 description: Nombre del evento
  *                 required: true
- *                 example: "Sucursal Central"
- *               es_principal:
- *                 type: boolean
- *                 description: Si es la sucursal principal
- *                 example: true
- *               direccion:
+ *                 example: "Charla de tecnología"
+ *               descripcion:
  *                 type: string
- *                 description: Dirección de la sucursal
+ *                 description: Descripción del evento
  *                 required: true
- *                 example: "Calle 123, Ciudad"
- *               bodegaId:
+ *                 example: "Evento sobre nuevas tecnologías."
+ *               cupo:
+ *                 type: string
+ *                 description: Cupo del evento
+ *                 required: true
+ *                 example: "50"
+ *               sucursalId:
  *                 type: number
- *                 description: ID de la bodega a la que pertenece
+ *                 description: ID de la sucursal a la que pertenece
  *                 required: true
  *                 example: 1
  *     responses:
  *       201:
- *         description: Sucursal created successfully
+ *         description: Evento created successfully
  *       400:
  *         description: Bad request
  *       500:
@@ -86,16 +87,16 @@ router.post('', controller.create);
 
 /**
  * @openapi
- * /sucursales/{id}:
+ * /eventos/{id}:
  *   put:
- *     summary: Update a sucursal
+ *     summary: Update an evento
  *     tags:
- *       - Sucursales
+ *       - Eventos
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: The id of the sucursal
+ *         description: The id of the evento
  *     requestBody:
  *       required: true
  *       content:
@@ -105,19 +106,23 @@ router.post('', controller.create);
  *             properties:
  *               nombre:
  *                 type: string
- *                 description: El nombre de la sucursal
- *                 example: "Sucursal Central"
- *               es_principal:
- *                 type: boolean
- *                 description: Si es la sucursal principal
- *                 example: true
- *               direccion:
+ *                 description: Nombre del evento
+ *                 example: "Charla de tecnología"
+ *               descripcion:
  *                 type: string
- *                 description: Dirección de la sucursal
- *                 example: "Calle 123, Ciudad"
+ *                 description: Descripción del evento
+ *                 example: "Evento sobre nuevas tecnologías."
+ *               cupo:
+ *                 type: string
+ *                 description: Cupo del evento
+ *                 example: "50"
+ *               sucursalId:
+ *                 type: number
+ *                 description: ID de la sucursal a la que pertenece
+ *                 example: 1
  *     responses:
  *       200:
- *         description: Sucursal updated successfully
+ *         description: Evento updated successfully
  *       400:
  *         description: Bad request
  *       500:
@@ -127,19 +132,19 @@ router.put('/:id', controller.update);
 
 /**
  * @openapi
- * /sucursales/{id}:
+ * /eventos/{id}:
  *   delete:
- *     summary: Delete a sucursal
+ *     summary: Delete an evento
  *     tags:
- *       - Sucursales
+ *       - Eventos
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: The id of the sucursal
+ *         description: The id of the evento
  *     responses:
  *       200:
- *         description: Sucursal deleted successfully
+ *         description: Evento deleted successfully
  *       400:
  *         description: Bad request
  *       500:
@@ -147,6 +152,6 @@ router.put('/:id', controller.update);
  */
 router.delete('/:id', controller.delete);
 
-logger.debug('Sucursal router initialized');
+logger.debug('Evento router initialized');
 
 export default router;

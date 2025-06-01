@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export default {
   PORT: process.env.PORT || 5000,
   API_VERSION: process.env.API_VERSION || 'v1',
@@ -8,4 +12,6 @@ export default {
   DB_NAME: process.env.DB_NAME || 'db',
   DB_HOST: process.env.DB_HOST || 'localhost',
   DB_PORT: parseInt(process.env.DB_PORT || '5432', 10),
+  IS_AUDIT_ENABLED: (process.env.IS_AUDIT_ENABLED === 'true' ||
+    true) as boolean,
 };

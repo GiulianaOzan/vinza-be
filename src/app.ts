@@ -13,6 +13,11 @@ import { sequelize } from './db';
 import userRouter from './users/router';
 import authRouter from './auth/router';
 import { contextMiddleware } from './context';
+import eventoRouter from './evento/router';
+import estadoEventoRouter from './estado-evento/router';
+import sucursalRouter from './sucursal/router';
+import bodegaRouter from './bodega/router';
+import auditRouter from './audit/router';
 
 function initializeRouter() {
   const router = Router();
@@ -21,6 +26,11 @@ function initializeRouter() {
   router.use('/users', userRouter);
   router.use('/auth', authRouter);
   router.use('/rbac', rolesRouter);
+  router.use('/evento', eventoRouter);
+  router.use('/estado-evento', estadoEventoRouter);
+  router.use('/sucursal', sucursalRouter);
+  router.use('/bodega', bodegaRouter);
+  router.use('/audits', auditRouter);
   return router;
 }
 

@@ -10,19 +10,29 @@ import { auditEmitter } from '@/audit/event';
 class UsersService {
   public async create(dto: CreateUserDto) {
     const { contrasena, roles, ...rest } = dto;
-    const hashed = await hashPassword(contrasena);
-    const user = await User.create({ ...rest, contrasena: hashed });
+    const transaction = await sequelize.transaction();
+    try {
+      const hashed = await hashPassword(contrasena);
+      let user = await User.create(
+        { ...rest, contrasena: hashed },
+        { transaction },
+      );
 
-    if (roles && roles.length > 0) {
-      await user.$set('roles', roles);
+      if (roles && roles.length > 0) {
+        await user.$set('roles', roles, { transaction });
+        user = await user.save({ transaction, returning: true });
+      }
+
+      auditEmitter.emitEntry({
+        tipoEvento: 'user:create',
+        valor: user.dataValues,
+      });
+
+      return user;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
     }
-
-    auditEmitter.emitEntry({
-      tipoEvento: 'user:create',
-      valor: user.dataValues,
-    });
-
-    return user;
   }
 
   public async findAll() {
