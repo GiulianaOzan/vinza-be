@@ -2,6 +2,7 @@ import { errors } from '@/error';
 import { Sucursal } from './model';
 import { CreateSucursalDto, UpdateSucursalDto } from './types';
 import { sequelize } from '@/db';
+import { auditEmitter } from '@/audit/event';
 
 class SucursalService {
   public async create(dto: CreateSucursalDto) {
@@ -13,6 +14,11 @@ class SucursalService {
       );
     }
     const sucursal = await Sucursal.create(dto);
+    auditEmitter.emitEntry({
+      tipoEvento: 'sucursal:create',
+      valor: sucursal.dataValues,
+    });
+
     return sucursal;
   }
 
@@ -40,9 +46,18 @@ class SucursalService {
           { where: { bodegaId: sucursal.bodegaId }, transaction },
         );
       }
-      await sucursal.update(dto, { transaction });
+      const updatedSucursal = await sucursal.update(dto, {
+        transaction,
+        returning: true,
+      });
+
+      auditEmitter.emitEntry({
+        tipoEvento: 'sucursal:update',
+        valor: updatedSucursal.dataValues,
+      });
+
       await transaction.commit();
-      return sucursal;
+      return updatedSucursal;
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -53,6 +68,10 @@ class SucursalService {
     const sucursal = await Sucursal.findByPk(id);
     if (!sucursal) throw errors.app.sucursal.not_found;
     await sucursal.destroy();
+    auditEmitter.emitEntry({
+      tipoEvento: 'sucursal:delete',
+      valor: sucursal.dataValues,
+    });
     return sucursal;
   }
 }

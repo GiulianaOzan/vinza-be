@@ -89,10 +89,13 @@ export class RolesService {
       }
 
       // Update other role properties
-      await role.update(rest, { transaction });
+      const r = await role.update(rest, {
+        transaction,
+        returning: true,
+      });
 
       await transaction.commit();
-      return this.findOne(id);
+      return r;
     } catch (error) {
       await transaction.rollback();
       throw error;

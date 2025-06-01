@@ -1,14 +1,14 @@
 import config from '@/config';
 import { db, sequelize } from '@/db';
 import { errors } from '@/error';
-import { User, UserAttributes, UserCreationAttributes } from '@/users/model';
+import { permissionsService, rolesService } from '@/rbac/service';
+import { UserAttributes, UserCreationAttributes } from '@/users/model';
 import { usersService } from '@/users/service';
 import { AuthenticatedUser } from '@/users/types';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { JwtAuthPayload, LoginDto, RegisterDto } from './types';
-import { permissionsService, rolesService } from '@/rbac/service';
 import { hashPassword } from './auth';
+import { JwtAuthPayload, LoginDto, RegisterDto } from './types';
 
 export class AuthService {
   constructor(private readonly db: db) {}
@@ -19,7 +19,7 @@ export class AuthService {
     // TODO: Add a default permission to the user
     const role = await this.createDefaultRole();
     const password = await hashPassword(dto.password);
-    const user = await User.create({
+    const user = await usersService.create({
       nombre: dto.name,
       apellido: dto.name, // You might want to add a lastname field to your DTO
       email: dto.email,
@@ -57,6 +57,7 @@ export class AuthService {
     await rolesService.update(role.id, {
       permisos: permissions.map((p) => p.id),
     });
+
     return role;
   }
 

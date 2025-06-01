@@ -3,6 +3,7 @@ import { errors } from '@/error';
 import { Sucursal } from '@/sucursal/model';
 import { Bodega } from './model';
 import { CreateBodegaDto, UpdateBodegaDto } from './types';
+import { auditEmitter } from '@/audit/event';
 
 class BodegaService {
   public async create(dto: CreateBodegaDto) {
@@ -20,6 +21,11 @@ class BodegaService {
         { transaction },
       );
       await transaction.commit();
+
+      auditEmitter.emitEntry({
+        tipoEvento: 'bodega:create',
+        valor: bodega.dataValues,
+      });
       return bodega;
     } catch (error) {
       await transaction.rollback();
@@ -46,9 +52,17 @@ class BodegaService {
       if (!bodega) {
         throw errors.app.bodega.not_found;
       }
-      await bodega.update(dto, { transaction });
+      const updatedBodega = await bodega.update(dto, {
+        transaction,
+        returning: true,
+      });
       await transaction.commit();
-      return bodega;
+
+      auditEmitter.emitEntry({
+        tipoEvento: 'bodega:update',
+        valor: updatedBodega.dataValues,
+      });
+      return updatedBodega;
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -61,6 +75,11 @@ class BodegaService {
       throw errors.app.bodega.not_found;
     }
     await bodega.destroy();
+
+    auditEmitter.emitEntry({
+      tipoEvento: 'bodega:delete',
+      valor: bodega.dataValues,
+    });
     return bodega;
   }
 }
