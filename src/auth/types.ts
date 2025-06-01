@@ -11,6 +11,6 @@ export type LoginDto = {
 };
 
 export type JwtAuthPayload = {
-  sub: number;
+  user: number;
   role: number;
 };

@@ -5,6 +5,7 @@ import { CreateUserDto, UpdateUserDto, UserWithoutPassword } from './types';
 import { Permiso, Rol } from '@/rbac/model';
 import { sequelize } from '@/db';
 import { Op } from 'sequelize';
+import { auditEmitter } from '@/audit/event';
 
 class UsersService {
   public async create(dto: CreateUserDto) {
@@ -15,6 +16,11 @@ class UsersService {
     if (roles && roles.length > 0) {
       await user.$set('roles', roles);
     }
+
+    auditEmitter.emitEntry({
+      tipoEvento: 'user:create',
+      valor: user.dataValues,
+    });
 
     return user;
   }
@@ -98,8 +104,19 @@ class UsersService {
         // Remove roles from dto so they are not updated as a field
         delete dto.roles;
       }
-      const user = await User.update(rest, { where: { id }, transaction });
+      const [user] = (
+        await User.update(rest, {
+          where: { id },
+          transaction,
+          returning: true,
+        })
+      )[1];
+
       await transaction.commit();
+      auditEmitter.emitEntry({
+        tipoEvento: 'user:update',
+        valor: user.dataValues,
+      });
       return user;
     } catch (error) {
       await transaction.rollback();
@@ -113,6 +130,10 @@ class UsersService {
       throw errors.app.user.not_found;
     }
     await user.destroy();
+    auditEmitter.emitEntry({
+      tipoEvento: 'user:delete',
+      valor: user.dataValues,
+    });
     return user;
   }
 }

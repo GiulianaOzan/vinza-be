@@ -17,7 +17,9 @@ export class SucursalController {
   public getAll(_req: Request, res: Response) {
     this.sucursalService
       .findAll()
-      .then((data) => res.json(data))
+      .then((data) => {
+        res.json(data);
+      })
       .catch((err) => res.json(err));
   }
 

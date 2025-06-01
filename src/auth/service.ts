@@ -37,6 +37,7 @@ export class AuthService {
   public async login(dto: LoginDto): Promise<AuthenticatedUser> {
     // If more strategies are added must extend this
     const user = await usersService.findOneByEmail(dto.email);
+
     if (!user || !(await bcrypt.compare(dto.password, user.contrasena))) {
       throw errors.app.auth.non_valid_credentials;
     }
@@ -60,9 +61,9 @@ export class AuthService {
   }
 
   private generateAuthToken(dto: UserAttributes) {
-    const payload: JwtAuthPayload = { sub: dto.id, role: dto.roles[0].id };
+    const payload: JwtAuthPayload = { user: dto.id, role: dto.roles[0].id };
     const token = jwt.sign(payload, config.JWT_SECRET, {
-      expiresIn: '15m',
+      expiresIn: '24h',
     });
     return token;
   }

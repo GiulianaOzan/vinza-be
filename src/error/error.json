@@ -12,6 +12,12 @@
         "message": "Error general",
         "message_eng": "General error",
         "status": 404
+      },
+      "misconfigured_audit_middleware": {
+        "key": "app.general.misconfigured_audit_middleware",
+        "message": "Misconfigured audit middleware",
+        "message_eng": "Misconfigured audit middleware",
+        "status": 500
       }
     },
     "auth": {

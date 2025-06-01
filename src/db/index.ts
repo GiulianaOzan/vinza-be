@@ -6,6 +6,7 @@ import { HRolUsuario, User } from '@/users/model';
 import 'dotenv/config';
 import { Sequelize } from 'sequelize-typescript';
 import { Sucursal } from '@/sucursal/model';
+import { Audit } from '@/audit/model';
 
 export const sequelize = new Sequelize({
   dialect: 'postgres',
@@ -17,7 +18,16 @@ export const sequelize = new Sequelize({
   ssl: false,
   sync: { alter: true },
   logging: false,
-  models: [User, HRolUsuario, Rol, HRolPermiso, Permiso, Bodega, Sucursal], // or [Player, Team],
+  models: [
+    User,
+    HRolUsuario,
+    Rol,
+    HRolPermiso,
+    Permiso,
+    Bodega,
+    Sucursal,
+    Audit,
+  ], // or [Player, Team],
 });
 
 logger.info('Initialized db models');

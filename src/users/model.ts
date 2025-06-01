@@ -24,7 +24,7 @@ export interface UserAttributes {
 }
 
 export interface UserCreationAttributes
-  extends Omit<UserAttributes, 'roles' | 'id' | 'bodega'> {
+  extends Omit<UserAttributes, 'roles' | 'id' | 'bodega' | 'validado'> {
   roles?: Rol['id'][];
   bodegaId?: number;
 }

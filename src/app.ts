@@ -12,6 +12,7 @@ import rolesRouter from './rbac/router';
 import { sequelize } from './db';
 import userRouter from './users/router';
 import authRouter from './auth/router';
+import { contextMiddleware } from './context';
 
 function initializeRouter() {
   const router = Router();
@@ -41,6 +42,8 @@ export default async function () {
   app.use(reqTracer);
   app.use(injectLogger);
   app.use(logRequests);
+
+  app.use(contextMiddleware);
 
   app.use(`/api/${config.API_VERSION}`, initializeRouter());
 
