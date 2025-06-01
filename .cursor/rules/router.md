@@ -1,0 +1,2 @@
+- In router files, within OpenAPI comments, try to provide examples for the fields.
+- In router files, within OpenAPI comments, remember to define the responses.

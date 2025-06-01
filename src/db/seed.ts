@@ -1,121 +1,93 @@
-// Make a seed for the database
+import { hashPassword } from '@/auth/auth';
+import { Permissions } from '@/rbac/permissions';
+import { permissionsService, rolesService } from '@/rbac/service';
+import { User } from '@/users/model';
+import { Bodega } from '@/bodega/model';
 
-import { db } from './index';
-import { reset, seed } from 'drizzle-seed';
-import * as schemas from './schema';
-import { hash } from 'bcrypt';
-import logger from '@/logger';
+async function seed() {
+  try {
+    // Create bodega 'zuccardi'
+    const zuccardi = await Bodega.create({
+      nombre: 'zuccardi',
+      descripcion: 'Bodega Zuccardi',
+    });
 
-export async function seedDatabase() {
-  /**
-     * DATA:
-     * {
-    roles: [
-      {
-        name: 'admin',
-      },
-    ],
-    permissions: [
-      { name: 'Read Users', key: 'USERS:READ' },
-      { name: 'Manage Users', key: 'USERS:MANAGE' },
-      { name: 'Read Roles', key: 'ROLES:READ' },
-      { name: 'Manage Roles', key: 'ROLES:MANAGE' },
-    ],
-    permissionsToRoles: async (data: SeedData) => {
-      const adminRole = data.roles[0];
-      const allPermissions = data.permissions;
+    // Create admin role (all permissions except SUDO), related to zuccardi
+    const adminRole = await rolesService.create({
+      nombre: 'ADMIN',
+      bodegaId: zuccardi.id,
+    });
 
-      return allPermissions.map((permission) => ({
-        roleId: adminRole.id,
-        permissionId: permission.id,
-      }));
-    },
-    users: async (data: SeedData) => {
-      const hashedPassword = await hash('admin123', 10);
-      const adminRole = data.roles[0];
+    // Create all permissions
+    const permissions = await Promise.all(
+      Object.values(Permissions).map(async (permission) => {
+        return await permissionsService.create({
+          nombre: permission,
+          clave: permission,
+        });
+      }),
+    );
 
-      return [
-        {
-          name: 'Admin User',
-          email: 'admin@example.com',
-          password: hashedPassword,
-          roleId: adminRole.id,
-          validated: new Date(),
-        },
-        {
-          name: 'Regular User',
-          email: 'user@example.com',
-          password: hashedPassword,
-          roleId: adminRole.id,
-          validated: new Date(),
-        },
-      ];
-    },
+    // All permissions except SUDO for admin
+    const adminPermissions = permissions.filter(
+      (p) => p.nombre !== Permissions.SUDO,
+    );
+    await rolesService.update(adminRole.id, {
+      permisos: adminPermissions.map((p) => p.id),
+    });
+
+    // Create admin user related to zuccardi
+    const adminPassword = await hashPassword('admin123');
+    const adminUser = await User.create({
+      nombre: 'Admin',
+      apellido: 'User',
+      email: 'admin@example.com',
+      contrasena: adminPassword,
+      roles: [adminRole.id],
+      bodegaId: zuccardi.id,
+    });
+    await adminUser.$set('roles', [adminRole.id]);
+
+    // This new user is a vinza admin, so there is no bodega related to the
+    // role nor the user itself
+
+    // Create SUDO role (all permissions), no bodega related
+    const sudoRole = await rolesService.create({
+      nombre: 'SUDO',
+    });
+    await rolesService.update(sudoRole.id, {
+      permisos: permissions.map((p) => p.id),
+    });
+
+    // Create sudoer user with SUDO role and no bodega
+    const sudoPassword = await hashPassword('sudo123');
+    const sudoer = await User.create({
+      nombre: 'sudoer',
+      apellido: 'sudoer',
+      email: 'sudo@sudo.com',
+      contrasena: sudoPassword,
+      roles: [sudoRole.id],
+    });
+    await sudoer.$set('roles', [sudoRole.id]);
+
+    // eslint-disable-next-line no-console
+    console.log('Database seeded successfully');
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error seeding database:', error);
+    throw error;
   }
-     */
-  // Erase all data in the database before seeding
-  await reset(db, schemas);
-  logger.info('ERASED THE DB');
-
-  const hashedPassword = await hash('admin123', 10);
-
-  await seed(db, schemas).refine((f) => ({
-    roles: {
-      count: 1,
-      columns: {
-        name: f.valuesFromArray({
-          values: ['admin'],
-          isUnique: true,
-        }),
-      },
-      with: {
-        users: 2, // Both users will be associated with the admin role
-      },
-    },
-    permissions: {
-      count: 4,
-      columns: {
-        name: f.valuesFromArray({
-          values: ['Read Users', 'Manage Users', 'Read Roles', 'Manage Roles'],
-          isUnique: true,
-        }),
-        key: f.valuesFromArray({
-          values: ['USERS:READ', 'USERS:MANAGE', 'ROLES:READ', 'ROLES:MANAGE'],
-          isUnique: true,
-        }),
-      },
-    },
-    permissionsToRoles: {
-      count: 4,
-      columns: {
-        roleId: f.valuesFromArray({
-          values: [1, 1, 1, 1], // The admin role ID
-        }),
-        permissionId: f.valuesFromArray({
-          values: [1, 2, 3, 4], // Unique permission IDs
-          isUnique: true, // This matters!
-        }),
-      },
-    },
-    users: {
-      count: 2,
-      columns: {
-        name: f.valuesFromArray({
-          values: ['Admin User', 'Regular User'],
-          isUnique: true,
-        }),
-        email: f.valuesFromArray({
-          values: ['admin@example.com', 'user@example.com'],
-          isUnique: true,
-        }),
-        password: f.valuesFromArray({
-          values: [hashedPassword],
-        }),
-        validated: f.date({
-          minDate: new Date('2024-01-01'),
-          maxDate: new Date(),
-        }),
-      },
-    },
-  }));
 }
+
+// Run the seed
+seed()
+  .then(() => {
+    // eslint-disable-next-line no-console
+    console.log('Seed completed');
+    process.exit(0);
+  })
+  .catch((error) => {
+    // eslint-disable-next-line no-console
+    console.error('Seed failed:', error);
+    process.exit(1);
+  });

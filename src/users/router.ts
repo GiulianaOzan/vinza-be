@@ -30,23 +30,6 @@ router.get(
 
 /**
  * @openapi
- * /users/{id}:
- *   security:
- *     - bearerAuth: []
- *   get:
- *     summary: Get a user by id
- *     tags:
- *       - Users
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: The id of the user
- */
-router.get('/:id', authMiddleware, controller.getOne);
-
-/**
- * @openapi
  * /users/me:
  *   security:
  *     - bearerAuth: []
@@ -66,6 +49,56 @@ router.get('/me', authMiddleware, controller.getMe);
 
 /**
  * @openapi
+ * /users/{id}:
+ *   security:
+ *     - bearerAuth: []
+ *   get:
+ *     summary: Get a user by id
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The id of the user
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: number
+ *                 nombre:
+ *                   type: string
+ *                 apellido:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 roles:
+ *                   type: array
+ *                   items:
+ *                     type: number
+ *                 createdAt:
+ *                   type: string
+ *                 updatedAt:
+ *                   type: string
+ *         description: User found successfully
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+router.get(
+  '/:id',
+  authMiddleware,
+  requirePermissions([Permissions.USERS_READ]),
+  controller.getOne,
+);
+
+/**
+ * @openapi
  * /users:
  *   security:
  *     - bearerAuth: []
@@ -80,31 +113,38 @@ router.get('/me', authMiddleware, controller.getMe);
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               nombre:
  *                 type: string
- *                 description: The name of the user
+ *                 description: El nombre del usuario
  *                 required: true
- *                 example: "John Doe"
- *               age:
+ *                 example: "Juan"
+ *               apellido:
+ *                 type: string
+ *                 description: El apellido del usuario
+ *                 required: true
+ *                 example: "Pérez"
+ *               edad:
  *                 type: number
- *                 description: The age of the user
+ *                 description: La edad del usuario (opcional)
  *                 required: true
- *                 example: 25
+ *                 example: 30
  *               email:
  *                 type: string
- *                 description: The email of the user
+ *                 description: El correo electrónico del usuario
  *                 required: true
- *                 example: "john.doe@example.com"
- *               password:
+ *                 example: "juan.perez@example.com"
+ *               contrasena:
  *                 type: string
- *                 description: The password of the user
+ *                 description: La contraseña del usuario
  *                 required: true
  *                 example: "password"
- *               roleId:
- *                 type: number
- *                 description: The role id of the user
+ *               roles:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 description: Los ids de los roles del usuario
  *                 required: true
- *                 example: 1
+ *                 example: [1]
  *     responses:
  *       201:
  *         description: User created successfully
@@ -113,7 +153,12 @@ router.get('/me', authMiddleware, controller.getMe);
  *       500:
  *         description: Internal server error
  */
-router.post('', authMiddleware, controller.create);
+router.post(
+  '',
+  authMiddleware,
+  requirePermissions([Permissions.USERS_MANAGE]),
+  controller.create,
+);
 
 /**
  * @openapi
@@ -156,7 +201,48 @@ router.post('', authMiddleware, controller.create);
  *                 type: number
  *                 description: The role id of the user
  *                 example: 1
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
  */
-router.delete('/:id', authMiddleware, controller.delete);
+router.put(
+  '/:id',
+  authMiddleware,
+  requirePermissions([Permissions.USERS_MANAGE]),
+  controller.update,
+);
+
+/**
+ * @openapi
+ * /users/{id}:
+ *   security:
+ *     - bearerAuth: []
+ *   delete:
+ *     summary: Delete a user
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The id of the user
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+router.delete(
+  '/:id',
+  authMiddleware,
+  requirePermissions([Permissions.USERS_MANAGE]),
+  controller.delete,
+);
 
 export default router;

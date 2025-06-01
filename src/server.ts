@@ -2,8 +2,8 @@ import initApp from '@/app';
 import config from '@/config';
 import 'dotenv/config';
 
-function server() {
-  const app = initApp();
+async function server() {
+  const app = await initApp();
   app.listen(config.PORT);
 }
 

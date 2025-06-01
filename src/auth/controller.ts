@@ -17,7 +17,9 @@ export class AuthController {
   public async login(req: Request, res: Response) {
     this.authService
       .login(req.body)
-      .then((response) => res.json(response))
+      .then((response) => {
+        res.json(response);
+      })
       .catch((e) => res.json(e));
   }
 }

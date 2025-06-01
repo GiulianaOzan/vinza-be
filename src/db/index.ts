@@ -1,11 +1,24 @@
+import { Bodega } from '@/bodega/model';
+import config from '@/config';
+import logger from '@/logger';
+import { HRolPermiso, Permiso, Rol } from '@/rbac/model';
+import { HRolUsuario, User } from '@/users/model';
 import 'dotenv/config';
-import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
-import * as schema from './schema';
+import { Sequelize } from 'sequelize-typescript';
 
-if (!process.env.DATABASE_URL) {
-  throw new Error('No database_url implemented in .env');
-}
+export const sequelize = new Sequelize({
+  dialect: 'postgres',
+  username: config.DB_USER,
+  password: config.DB_PASSWORD,
+  database: config.DB_NAME,
+  host: config.DB_HOST,
+  port: Number(config.DB_PORT),
+  ssl: false,
+  sync: { alter: true },
+  logging: false,
+  models: [User, HRolUsuario, Rol, HRolPermiso, Permiso, Bodega], // or [Player, Team],
+});
 
-export const db = drizzle(process.env.DATABASE_URL!, { schema });
+logger.info('Initialized db models');
 
-export type DrizzleDatabase = NodePgDatabase<typeof schema>;
+export type db = typeof sequelize;

@@ -1,12 +1,12 @@
-export type CreateRoleDto = {
-  name: string;
-};
+import { PermissionCreationAttributes, RolCreationAttributes } from './model';
 
-export type UpdateRoleDto = {
-  name?: string;
-  permissions?: number[];
-};
+export type CreateRolDto = RolCreationAttributes;
 
-export type UpdatePermissionDto = {
-  name?: string;
-};
+export type UpdateRoleDto = Partial<RolCreationAttributes>;
+
+export type CreatePermissionDto = PermissionCreationAttributes;
+
+export type UpdatePermissionDto = Omit<
+  Partial<PermissionCreationAttributes>,
+  'clave'
+>;

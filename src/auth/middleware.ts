@@ -24,7 +24,6 @@ export const authMiddleware = (
   if (!decoded) {
     throw errors.app.auth.unauthorized;
   }
-
   req.user = decoded as unknown as JwtAuthPayload;
 
   next();

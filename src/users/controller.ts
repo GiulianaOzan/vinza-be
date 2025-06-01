@@ -1,6 +1,6 @@
 import { IUsersService } from '@/users/service';
 import type { Request, Response } from 'express';
-import { UpdateUserSchema } from './schema';
+import { createUserSchema, UpdateUserSchema } from './schema';
 export class UsersController {
   readonly usersService;
 
@@ -26,7 +26,19 @@ export class UsersController {
   }
 
   public create(req: Request, res: Response) {
-    this.usersService.create(req.body).then((data) => res.json(data));
+    createUserSchema
+      .parseAsync(req.body)
+      .then((dto) =>
+        this.usersService
+          .create(dto)
+          .then((data) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { contrasena, ...userWithoutPassword } = data.dataValues;
+            res.json(userWithoutPassword);
+          })
+          .catch((err) => res.json(err)),
+      )
+      .catch((err) => res.status(400).json({ error: err.message }));
   }
 
   public update(req: Request, res: Response) {
