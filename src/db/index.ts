@@ -2,7 +2,7 @@ import { Bodega } from '@/bodega/model';
 import config from '@/config';
 import logger from '@/logger';
 import { HRolPermiso, Permiso, Rol } from '@/rbac/model';
-import { HRolUsuario, User } from '@/users/model';
+import { CodigoRecuperarContra, HRolUsuario, User } from '@/users/model';
 import 'dotenv/config';
 import { Sequelize } from 'sequelize-typescript';
 import { Sucursal } from '@/sucursal/model';
@@ -38,6 +38,7 @@ export const sequelize = new Sequelize({
     CategoriaEvento,
     HCategoriaEvento,
     Valoracion,
+    CodigoRecuperarContra,
   ], // or [Player, Team],
 });
 

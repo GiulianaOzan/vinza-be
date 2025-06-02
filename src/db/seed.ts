@@ -14,7 +14,7 @@ import { Valoracion } from '@/valoracion/model';
 async function seed() {
   try {
     await sequelize.sync({ force: true });
-    config.IS_AUDIT_DISABLED = false;
+    config.IS_AUDIT_DISABLED = true;
     // Create bodega 'zuccardi'
     const zuccardi = await Bodega.create({
       nombre: 'zuccardi',
@@ -140,7 +140,7 @@ async function seed() {
     console.error('Error seeding database:', error);
     throw error;
   } finally {
-    config.IS_AUDIT_DISABLED = true;
+    config.IS_AUDIT_DISABLED = false;
   }
 }
 

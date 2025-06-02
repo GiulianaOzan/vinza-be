@@ -15,7 +15,8 @@ export interface AuditAttributes {
   createdAt?: Date;
   deletedAt?: Date | null;
   tipoEvento: AuditEventType;
-  userId: number;
+  /**Auth register process wont have a user id to track itself */
+  userId?: number;
 }
 
 export type AuditCreationAttributes = Omit<
@@ -35,7 +36,7 @@ export class Audit extends Model<AuditAttributes> {
   tipoEvento!: AuditEventType;
 
   @ForeignKey(() => User)
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.INTEGER, allowNull: true })
   userId!: number;
 
   @BelongsTo(() => User)

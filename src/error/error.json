@@ -32,6 +32,12 @@
         "message": "Unauthorized",
         "message_eng": "Unauthorized",
         "status": 401
+      },
+      "invalid_or_expired_code": {
+        "key": "app.auth.invalid_or_expired_code",
+        "message": "Invalid or expired code",
+        "message_eng": "Invalid or expired code",
+        "status": 401
       }
     },
     "user": {

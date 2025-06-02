@@ -90,3 +90,49 @@ export class HRolUsuario extends Model {
   @Column({ type: DataType.INTEGER, allowNull: false })
   rolId!: number;
 }
+
+// Password recovery code model
+export interface CodigoRecuperarContraAttributes {
+  id: number;
+  valor: string;
+  created_at: Date;
+  deleted_at?: Date | null;
+  valido_hasta: Date;
+  userId: number;
+}
+
+export type CodigoRecuperarContraCreationAttributes = Omit<
+  CodigoRecuperarContraAttributes,
+  'id' | 'created_at' | 'deleted_at'
+>;
+
+@Table({
+  tableName: 'codigo_recuperar_contra',
+  paranoid: true,
+  createdAt: 'created_at',
+  deletedAt: 'deleted_at',
+})
+export class CodigoRecuperarContra extends Model<
+  CodigoRecuperarContraAttributes,
+  CodigoRecuperarContraCreationAttributes
+> {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  id!: number;
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  valor!: string;
+
+  @Column({ type: DataType.DATE, allowNull: false })
+  valido_hasta!: Date;
+
+  @ForeignKey(() => User)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  userId!: number;
+
+  @BelongsTo(() => User)
+  user!: User;
+}

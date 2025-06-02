@@ -8,7 +8,6 @@ async function server() {
 
   // Add here async initializations
   await redisClient.connect();
-
   app.listen(config.PORT);
 }
 

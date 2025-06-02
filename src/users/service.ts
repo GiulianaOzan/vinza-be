@@ -1,11 +1,12 @@
-import { hashPassword } from '@/auth/auth';
-import { errors } from '@/error';
-import { User } from './model';
-import { CreateUserDto, UpdateUserDto, UserWithoutPassword } from './types';
-import { Permiso, Rol } from '@/rbac/model';
-import { sequelize } from '@/db';
-import { Op } from 'sequelize';
 import { auditEmitter } from '@/audit/event';
+import { hashPassword } from '@/auth/auth';
+import { sequelize } from '@/db';
+import { errors } from '@/error';
+import logger from '@/logger';
+import { Permiso, Rol } from '@/rbac/model';
+import { Op } from 'sequelize';
+import { User } from './model';
+import { CreateUserDto, UpdateUserDto } from './types';
 
 class UsersService {
   public async create(dto: CreateUserDto) {
@@ -28,7 +29,8 @@ class UsersService {
         valor: user.dataValues,
       });
 
-      return user;
+      await transaction.commit();
+      return this.findOne(user.id);
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -40,7 +42,7 @@ class UsersService {
     return users;
   }
 
-  public async findOne(id: number): Promise<UserWithoutPassword> {
+  public async findOne(id: number) {
     const user = await User.findByPk(id, {
       attributes: {
         exclude: ['contrasena'],
@@ -54,9 +56,10 @@ class UsersService {
       ],
     });
     if (!user) {
+      logger.debug(`User not found with id ${id}`);
       throw errors.app.user.not_found;
     }
-    return user as UserWithoutPassword;
+    return user;
   }
 
   public async findOneByEmail(email: string) {

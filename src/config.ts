@@ -20,4 +20,7 @@ export default {
   IS_AUDIT_DISABLED: process.env.IS_AUDIT_DISABLED === 'true' || false,
   REDIS_HOST: process.env.REDIS_HOST || 'localhost',
   REDIS_PORT: parseInt(process.env.REDIS_PORT || '6379', 10),
+  SMTP_USER: process.env.SMTP_USER || 'user',
+  SMTP_PASS: process.env.SMTP_PASS || 'pass',
+  SMTP_FROM: process.env.SMTP_FROM || 'no-reply@example.com',
 };

@@ -9,8 +9,12 @@ import config from '@/config';
 class AuditEvent extends EventEmitter {
   constructor() {
     super();
+
+    logger.info(
+      `Audit logging is ${config.IS_AUDIT_DISABLED ? 'disabled' : 'enabled'}`,
+    );
     super.on('entry', async (data: AuditEventEntry) => {
-      if (!config.IS_AUDIT_DISABLED) {
+      if (config.IS_AUDIT_DISABLED) {
         logger.info(`Audit logging disabled - ${data.tipoEvento}`);
         return;
       }

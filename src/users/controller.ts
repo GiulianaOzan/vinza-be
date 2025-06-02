@@ -32,9 +32,7 @@ export class UsersController {
         this.usersService
           .create(dto)
           .then((data) => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { contrasena, ...userWithoutPassword } = data.dataValues;
-            res.json(userWithoutPassword);
+            res.json(data);
           })
           .catch((err) => res.json(err)),
       )
