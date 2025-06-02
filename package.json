@@ -55,6 +55,7 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.0",
     "pg-hstore": "^2.3.4",
+    "redis": "^5.1.1",
     "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",

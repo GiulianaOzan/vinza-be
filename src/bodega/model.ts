@@ -1,4 +1,5 @@
 import { Rol } from '@/rbac/model';
+import { Sucursal } from '@/sucursal/model';
 import { User } from '@/users/model';
 import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 
@@ -41,4 +42,7 @@ export class Bodega extends Model<BodegaAttributes, BodegaCreationAttributes> {
 
   @HasMany(() => User)
   users?: User[];
+
+  @HasMany(() => Sucursal)
+  sucursales?: Sucursal[];
 }

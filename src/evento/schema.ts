@@ -6,6 +6,7 @@ export const createEventoSchema = z.object({
   cupo: z.string(),
   sucursalId: z.number(),
   estadoId: z.number(),
+  categoriaId: z.number(),
 });
 
 export const updateEventoSchema = z.object({
@@ -14,4 +15,5 @@ export const updateEventoSchema = z.object({
   cupo: z.string().optional(),
   sucursalId: z.number().optional(),
   estadoId: z.number().optional(),
+  categoriaId: z.number().optional(),
 });

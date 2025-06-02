@@ -10,6 +10,8 @@ import {
 import { HEstadoEvento } from '@/estado-evento/model';
 import { Sucursal } from '@/sucursal/model';
 import { EstadoEvento } from '@/estado-evento/model';
+import { CategoriaEvento } from '@/categoria-evento/model';
+import { HCategoriaEvento } from '@/categoria-evento/model';
 
 export interface EventoAttributes {
   id: number;
@@ -18,13 +20,15 @@ export interface EventoAttributes {
   cupo: string;
   sucursalId: number;
   estados: EstadoEvento[];
+  categorias: CategoriaEvento[];
 }
 
 export type EventoCreationAttributes = Omit<
   EventoAttributes,
-  'id' | 'estados'
+  'id' | 'estados' | 'categorias'
 > & {
   estadoId: EstadoEvento['id'];
+  categoriaId: CategoriaEvento['id'];
 };
 
 @Table({
@@ -60,4 +64,7 @@ export class Evento extends Model<EventoAttributes, EventoCreationAttributes> {
 
   @BelongsToMany(() => EstadoEvento, () => HEstadoEvento)
   estados!: EstadoEvento[];
+
+  @BelongsToMany(() => CategoriaEvento, () => HCategoriaEvento)
+  categorias!: CategoriaEvento[];
 }

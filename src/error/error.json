@@ -82,6 +82,20 @@
         "message": "Estado not found",
         "message_eng": "Estado not found",
         "status": 404
+      },
+      "categoria_evento_not_found": {
+        "key": "app.evento.categoria_evento_not_found",
+        "message": "Categoria evento not found",
+        "message_eng": "Categoria evento not found",
+        "status": 404
+      }
+    },
+    "valoracion": {
+      "not_found": {
+        "key": "app.valoracion.not_found",
+        "message": "Valoración not found",
+        "message_eng": "Valoración not found",
+        "status": 404
       }
     }
   }

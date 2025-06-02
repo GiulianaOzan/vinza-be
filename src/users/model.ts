@@ -76,7 +76,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
 
 // Intermediate table for User-Rol relationship
 @Table({
-  tableName: 'HRolUsuario',
+  tableName: 'h_rol_usuarios',
   paranoid: true,
   createdAt: 'created_at',
   deletedAt: 'deleted_at',

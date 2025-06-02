@@ -58,6 +58,6 @@ export class UsersController {
   }
 
   public getMe(req: Request, res: Response) {
-    this.usersService.findOne(+req.user!.user).then((data) => res.json(data));
+    this.usersService.findOne(+req.user!).then((data) => res.json(data));
   }
 }

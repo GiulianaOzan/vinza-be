@@ -2,6 +2,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+/**
+ * Application configuration.
+ *
+ * *Dont override the values at runtime, use the .env file*
+ */
 export default {
   PORT: process.env.PORT || 5000,
   API_VERSION: process.env.API_VERSION || 'v1',
@@ -12,6 +17,7 @@ export default {
   DB_NAME: process.env.DB_NAME || 'db',
   DB_HOST: process.env.DB_HOST || 'localhost',
   DB_PORT: parseInt(process.env.DB_PORT || '5432', 10),
-  IS_AUDIT_ENABLED: (process.env.IS_AUDIT_ENABLED === 'true' ||
-    true) as boolean,
+  IS_AUDIT_DISABLED: process.env.IS_AUDIT_DISABLED === 'true' || false,
+  REDIS_HOST: process.env.REDIS_HOST || 'localhost',
+  REDIS_PORT: parseInt(process.env.REDIS_PORT || '6379', 10),
 };

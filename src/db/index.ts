@@ -9,6 +9,9 @@ import { Sucursal } from '@/sucursal/model';
 import { Audit } from '@/audit/model';
 import { EstadoEvento, HEstadoEvento } from '@/estado-evento/model';
 import { Evento } from '@/evento/model';
+import { CategoriaEvento } from '@/categoria-evento/model';
+import { HCategoriaEvento } from '@/categoria-evento/model';
+import { Valoracion } from '@/valoracion/model';
 
 export const sequelize = new Sequelize({
   dialect: 'postgres',
@@ -32,6 +35,9 @@ export const sequelize = new Sequelize({
     Evento,
     EstadoEvento,
     HEstadoEvento,
+    CategoriaEvento,
+    HCategoriaEvento,
+    Valoracion,
   ], // or [Player, Team],
 });
 

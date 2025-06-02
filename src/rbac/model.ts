@@ -13,6 +13,7 @@ import { Bodega } from '@/bodega/model';
 
 // Junction table for many-to-many relationship
 @Table({
+  tableName: 'h_rol_permisos',
   paranoid: true,
   createdAt: 'created_at',
   deletedAt: 'deleted_at',

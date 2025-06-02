@@ -6,7 +6,7 @@ import { JwtAuthPayload } from './types';
 
 declare module 'express' {
   interface Request {
-    user?: JwtAuthPayload;
+    user?: JwtAuthPayload['user'];
   }
 }
 
@@ -24,7 +24,7 @@ export const authMiddleware = (
   if (!decoded) {
     throw errors.app.auth.unauthorized;
   }
-  req.user = decoded as unknown as JwtAuthPayload;
+  req.user = (decoded as unknown as JwtAuthPayload).user;
 
   next();
 };

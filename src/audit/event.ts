@@ -10,7 +10,7 @@ class AuditEvent extends EventEmitter {
   constructor() {
     super();
     super.on('entry', async (data: AuditEventEntry) => {
-      if (!config.IS_AUDIT_ENABLED) {
+      if (!config.IS_AUDIT_DISABLED) {
         logger.info(`Audit logging disabled - ${data.tipoEvento}`);
         return;
       }

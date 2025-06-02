@@ -1,11 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 // context/request-context.ts
 import { createNamespace, getNamespace } from 'cls-hooked';
-import config from './config';
-import { errors } from './error';
 import { JwtAuthPayload } from './auth/types';
+import { errors } from './error';
 
 const NAMESPACE_NAME = 'app.context';
 
@@ -35,10 +34,11 @@ export function contextMiddleware(
   context.run(() => {
     const token = req.headers.authorization?.split(' ')[1];
     if (token) {
-      const decoded = jwt.verify(
-        token,
-        config.JWT_SECRET,
-      ) as unknown as JwtAuthPayload;
+      // Decodes because the token is verified by the authMiddleware
+      // This middleware runs even if the route is not authenticated
+      // And there may be a case where the token is not valid, but the route is
+      // unprotected.
+      const decoded = jwt.decode(token) as unknown as JwtAuthPayload;
       if (!decoded) {
         throw errors.app.auth.unauthorized;
       }

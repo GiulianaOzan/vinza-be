@@ -7,10 +7,14 @@ import { estadoEventoService } from '@/estado-evento/service';
 import { eventoService } from '@/evento/service';
 import { sucursalService } from '@/sucursal/service';
 import config from '@/config';
+import { categoriaEventoService } from '@/categoria-evento/service';
+import { sequelize } from '.';
+import { Valoracion } from '@/valoracion/model';
 
 async function seed() {
   try {
-    config.IS_AUDIT_ENABLED = false;
+    await sequelize.sync({ force: true });
+    config.IS_AUDIT_DISABLED = false;
     // Create bodega 'zuccardi'
     const zuccardi = await Bodega.create({
       nombre: 'zuccardi',
@@ -91,21 +95,43 @@ async function seed() {
       }),
     );
 
-    await eventoService.create({
+    const [categoriaEvento1, categoriaEvento2] = await Promise.all(
+      ['categoria 1', 'categoria 2'].map(async (nombre) => {
+        return await categoriaEventoService.create({
+          nombre,
+        });
+      }),
+    );
+
+    const evento1 = await eventoService.create({
       nombre: 'evento 1',
       descripcion: 'descripcion 1',
       cupo: '10',
       sucursalId: mainSucursal.id,
       estadoId: activoEstadoEvento.id,
+      categoriaId: categoriaEvento1.id,
     });
 
-    await eventoService.create({
+    const evento2 = await eventoService.create({
       nombre: 'evento 2',
       descripcion: 'descripcion 2',
       cupo: '10',
       sucursalId: mainSucursal.id,
       estadoId: inactivoEstadoEvento.id,
+      categoriaId: categoriaEvento2.id,
     });
+
+    // Create 3 valoraciones for each event
+    const valoracionesData = [
+      { valor: 5, comentario: 'Excelente evento', userId: adminUser.id },
+      { valor: 3, comentario: 'Estuvo bien', userId: adminUser.id },
+      { valor: 1, comentario: 'No me gustó', userId: adminUser.id },
+    ];
+    for (const evento of [evento1, evento2]) {
+      for (const val of valoracionesData) {
+        await Valoracion.create({ ...val, eventoId: evento.id });
+      }
+    }
 
     // eslint-disable-next-line no-console
     console.log('Database seeded successfully');
@@ -114,7 +140,7 @@ async function seed() {
     console.error('Error seeding database:', error);
     throw error;
   } finally {
-    config.IS_AUDIT_ENABLED = true;
+    config.IS_AUDIT_DISABLED = true;
   }
 }
 

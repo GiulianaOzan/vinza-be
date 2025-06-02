@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize';
 import { EstadoEvento } from './model';
 import { CreateEstadoEventoDto, UpdateEstadoEventoDto } from './types';
+import { errors } from '@/error';
 
 class EstadoEventoService {
   public async create(dto: CreateEstadoEventoDto) {
@@ -14,13 +15,13 @@ class EstadoEventoService {
 
   public async findOne(id: number, transaction?: Transaction) {
     const estadoEvento = await EstadoEvento.findByPk(id, { transaction });
-    if (!estadoEvento) throw { message: 'EstadoEvento not found', status: 404 };
+    if (!estadoEvento) throw errors.app.evento.estado_not_found;
     return estadoEvento;
   }
 
   public async update(id: number, dto: UpdateEstadoEventoDto) {
     const estadoEvento = await EstadoEvento.findByPk(id);
-    if (!estadoEvento) throw { message: 'EstadoEvento not found', status: 404 };
+    if (!estadoEvento) throw errors.app.evento.estado_not_found;
     const updatedEstadoEvento = await estadoEvento.update(dto, {
       returning: true,
     });
@@ -29,7 +30,7 @@ class EstadoEventoService {
 
   public async delete(id: number) {
     const estadoEvento = await EstadoEvento.findByPk(id);
-    if (!estadoEvento) throw { message: 'EstadoEvento not found', status: 404 };
+    if (!estadoEvento) throw errors.app.evento.estado_not_found;
     await estadoEvento.destroy();
     return estadoEvento;
   }

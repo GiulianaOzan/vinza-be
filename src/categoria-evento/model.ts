@@ -11,29 +11,30 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 
-export interface EstadoEventoAttributes {
+export interface CategoriaEventoAttributes {
   id: number;
   nombre: string;
   created_at: string;
   updated_at: string;
   deleted_at?: string;
+  eventos?: Evento[];
 }
 
-export type EstadoEventoCreationAttributes = Omit<
-  EstadoEventoAttributes,
-  'id' | 'created_at' | 'updated_at' | 'deleted_at'
+export type CategoriaEventoCreationAttributes = Omit<
+  CategoriaEventoAttributes,
+  'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'eventos'
 >;
 
 @Table({
-  tableName: 'estado_eventos',
+  tableName: 'categoria_eventos',
   paranoid: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
   deletedAt: 'deleted_at',
 })
-export class EstadoEvento extends Model<
-  EstadoEventoAttributes,
-  EstadoEventoCreationAttributes
+export class CategoriaEvento extends Model<
+  CategoriaEventoAttributes,
+  CategoriaEventoCreationAttributes
 > {
   @Column({
     type: DataType.INTEGER,
@@ -57,33 +58,33 @@ export class EstadoEvento extends Model<
   @Column({ type: DataType.DATE })
   deleted_at!: string | null;
 
-  @BelongsToMany(() => Evento, () => HEstadoEvento)
+  @BelongsToMany(() => Evento, () => HCategoriaEvento)
   eventos!: Evento[];
 }
 
-export interface HEstadoEventoAttributes {
+export interface HCategoriaEventoAttributes {
   id: number;
   eventoId: number;
-  estadoEventoId: number;
+  categoriaEventoId: number;
   created_at: Date;
   deleted_at: Date | null;
 }
 
-export type HEstadoEventoCreationAttributes = Omit<
-  HEstadoEventoAttributes,
+export type HCategoriaEventoCreationAttributes = Omit<
+  HCategoriaEventoAttributes,
   'id' | 'created_at' | 'deleted_at'
 >;
 
 @Table({
+  tableName: 'h_categoria_eventos',
   paranoid: true,
   createdAt: 'created_at',
   deletedAt: 'deleted_at',
   updatedAt: false,
-  tableName: 'h_estado_eventos',
 })
-export class HEstadoEvento extends Model<
-  HEstadoEventoAttributes,
-  HEstadoEventoCreationAttributes
+export class HCategoriaEvento extends Model<
+  HCategoriaEventoAttributes,
+  HCategoriaEventoCreationAttributes
 > {
   @Column({
     type: DataType.INTEGER,
@@ -96,9 +97,9 @@ export class HEstadoEvento extends Model<
   @Column({ type: DataType.INTEGER, allowNull: false })
   eventoId!: number;
 
-  @ForeignKey(() => EstadoEvento)
+  @ForeignKey(() => CategoriaEvento)
   @Column({ type: DataType.INTEGER, allowNull: false })
-  estadoEventoId!: number;
+  categoriaEventoId!: number;
 
   @CreatedAt
   @Column({ type: DataType.DATE })
